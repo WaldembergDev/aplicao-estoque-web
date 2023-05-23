@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <title>EstoqueApp</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .lista-produto {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+      }
+
+      table {
+        width: 80%;
+        border: indigo 1.5px solid;
+      }
+
+      td,
+      th {
+        text-align: center;
+      }
+
+      thead {
+        background-color: indigo;
+        color: #fff;
+      }
+
+      thead tr,
+      thead td {
+        background-color: indigo;
+      }
+
+      tbody tr {
+        background-color: #fff;
+        transition: all linear 500ms;
+      }
+
+      tbody tr:hover {
+        background-color: rgb(193, 176, 205);
+        transition: all linear 500ms;
+      }
+
+      tbody tr:hover a {
+        color: #fff;
+        transition: all linear 500ms;
+      }
+
+      .cria-produto {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        margin: 10px;
+      }
+
+      .pagination {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="~{components/geral :: cabecalho}"></header>
+
+    <div class="cria-produto">
+      <a
+        class="waves-effect waves-light btn modal-trigger indigo"
+        href="#modal-novo-produto"
+        >Cadastrar produto</a
+      >
+    </div>
+    <div class="lista-produto">
+      <table>
+        <thead>
+          <tr class="indigo">
+            <th>Nome</th>
+            <th>Quantidade</th>
+            <th>Deletar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${listaVazia}">
+            <td colspan="3">SEM PRODUTOS</td>
+          </tr>
+          <tr th:unless="${listaVazia}" th:each="produto : ${produtos}">
+            <td>
+              <a
+                class="modal-trigger"
+                th:href="@{'#modal-produto-' + ${produto.id}}"
+                ><span th:text="${produto.nome}"></span
+              ></a>
+            </td>
+            <td><span th:text="${produto.quantidade}"></span></td>
+            <td>
+              <a
+                th:href="${(#mvc.url('PC#deletarProduto').arg(0, produto.id)).build()}"
+                class="btn-flat transparent"
+                type="submit"
+              >
+                <i style="color: #f44336" class="material-icons">delete</i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ul class="pagination">
+        <li class="disabled">
+          <a href="#!"><i class="material-icons">chevron_left</i></a>
+        </li>
+        <li
+          th:each="pagina : ${paginas}"
+          th:class="${paginaAtual == pagina} ? 'active indigo' : 'waves-effect'"
+        >
+          <a th:href="@{'/produtos?page=' + ${pagina}}"
+            ><span th:text="${pagina}"></span
+          ></a>
+        </li>
+        <li class="waves-effect">
+          <a href="#!"><i class="material-icons">chevron_right</i></a>
+        </li>
+      </ul>
+    </div>
+    <!-- Modal Structure -->
+    <div id="modal-novo-produto" class="modal">
+      <div
+        th:insert="~{components/geral :: novo-produto}"
+        class="modal-content"
+      ></div>
+    </div>
+    <!-- Modal Structure -->
+    <div
+      th:each="produto : ${produtos}"
+      th:id="'modal-produto-' + ${produto.id}"
+      class="modal"
+    >
+      <div
+        th:insert="~{components/geral :: produto}"
+        class="modal-content"
+      ></div>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.min.js"
+      integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".modal").modal();
+      });
+
+      $(document).ready(function () {
+        $("select").formSelect();
+      });
+    </script>
+  </body>
+</html>

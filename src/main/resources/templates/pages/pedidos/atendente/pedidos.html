@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <title>EstoqueApp</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      .lista-pedido {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+      }
+
+      table {
+        width: 80%;
+        border: indigo 1.4px solid;
+      }
+
+      td,
+      th {
+        text-align: center;
+      }
+
+      .cria-pedido {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        margin: 10px;
+      }
+
+      .pagination {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="~{components/geral :: cabecalho}"></header>
+    <div class="cria-pedido">
+      <a class="modal-trigger" th:href="@{'#modal-pedido-' + ${pedido.id}}"
+        >Cadastrar pedido</a
+      >
+    </div>
+
+    <div class="lista-pedido">
+      <table>
+        <thead>
+          <tr class="indigo">
+            <th>#ID</th>
+            <th>Nome do requerente</th>
+            <th>Data</th>
+            <th>Status</th>
+            <th>Visto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${listaVazia}">
+            <td colspan="3">SEM PEDIDOS</td>
+          </tr>
+          <tr th:unless="${listaVazia}" th:each="pedido : ${pedidos}">
+            <td>
+              <a
+                class="modal-trigger"
+                th:href="@{'#modal-pedido-' + ${pedido.id}}"
+                ><span th:text="${pedido.requerente.nome}"></span
+              ></a>
+            </td>
+            <td><span th:text="${pedido.dataInicio}"></span></td>
+            <td><span th:text="${pedido.status}"></span></td>
+            <td><span th:text="${pedido.visto}"></span></td>
+            <td>
+              <a
+                th:href="${(#mvc.url('PC#deletarPedido').arg(0, pedido.id)).build()}"
+                class="btn-flat transparent"
+                type="submit"
+              >
+                <i style="color: #f44336" class="material-icons">delete</i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ul class="pagination">
+        <li class="disabled">
+          <a href="#!"><i class="material-icons">chevron_left</i></a>
+        </li>
+        <li
+          th:each="pagina : ${paginas}"
+          th:class="${paginaAtual == pagina} ? 'active indigo' : 'waves-effect'"
+        >
+          <a th:href="@{'/pedidos?page=' + ${pagina}}"
+            ><span th:text="${pagina}"></span
+          ></a>
+        </li>
+        <li class="waves-effect">
+          <a href="#!"><i class="material-icons">chevron_right</i></a>
+        </li>
+      </ul>
+      <!-- Modal Structure -->
+      <div id="modal-novo-pedido" class="modal">
+        <div
+          th:insert="~{components/geral :: novo-pedido}"
+          class="modal-content"
+        ></div>
+      </div>
+      <!-- Modal Structure -->
+      <div
+        th:each="pedido : ${pedidos}"
+        th:id="'modal-pedido-' + ${pedido.id}"
+        class="modal"
+      >
+        <div
+          th:insert="~{components/geral :: pedido}"
+          class="modal-content"
+        ></div>
+      </div>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.min.js"
+      integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".modal").modal();
+      });
+
+      $(document).ready(function () {
+        $("select").formSelect();
+      });
+    </script>
+  </body>
+</html>

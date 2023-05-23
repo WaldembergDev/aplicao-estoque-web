@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <title>EstoqueApp</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        background-color: indigo;
+        color: #fff;
+        height: 60px;
+      }
+
+      ul {
+        list-style: none;
+        display: flex;
+      }
+
+      nav ul li {
+        padding: 5px;
+        margin: 0 5px;
+      }
+
+      nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        padding: 10px 15px;
+        transition: all linear 300ms;
+      }
+
+      nav ul li a:hover {
+        background-color: rgb(122, 69, 160);
+        transition: all linear 300ms;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      .lista-produto {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+      }
+
+      table {
+        width: 80%;
+        border: indigo 1.5px solid;
+      }
+
+      td,
+      th {
+        text-align: center;
+      }
+
+      thead {
+        background-color: indigo;
+        color: #fff;
+      }
+
+      thead tr,
+      thead td {
+        background-color: indigo;
+      }
+
+      tbody tr {
+        background-color: #fff;
+        transition: all linear 500ms;
+      }
+
+      tbody tr:hover {
+        background-color: rgb(193, 176, 205);
+        transition: all linear 500ms;
+      }
+
+      .cria-produto {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        margin: 10px;
+      }
+
+      .cria-produto a {
+        text-decoration: none;
+        background-color: indigo;
+        padding: 6px 20px;
+        border-radius: 5px;
+        color: #fff;
+        font-weight: 600;
+        transition: all linear 500ms;
+      }
+
+      .cria-produto a:hover {
+        color: #000;
+        background-color: rgb(230, 219, 237);
+        transition: all linear 500ms;
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="~{components/geral :: cabecalho}"></header>
+    <div class="cria-produto">
+      <a href="#">Cadastrar usuário</a>
+    </div>
+    <div class="lista-produto">
+      <table>
+        <thead>
+          <tr>
+            <th>#ID</th>
+            <th>Nome</th>
+            <th>usuário</th>
+            <th>setor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <a href="#">1</a>
+            </td>
+            <td><a href="#"> Jonas </a></td>
+            <td>jonas17</td>
+            <td>TI</td>
+          </tr>
+        </tbody>
+      </table>
+      <div>1..10</div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  </body>
+</html>

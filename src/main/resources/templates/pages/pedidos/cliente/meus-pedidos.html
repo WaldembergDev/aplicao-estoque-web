@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+    />
+    <title>EstoqueApp</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        background-color: indigo;
+        color: #fff;
+        height: 60px;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      .lista-pedido {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+      }
+
+      table {
+        width: 80%;
+        border: indigo 1.4px solid;
+      }
+
+      td,
+      th {
+        text-align: center;
+      }
+
+      thead tr {
+        color: #fff;
+      }
+
+      tbody tr {
+        background-color: #fff;
+        transition: all linear 500ms;
+      }
+
+      tbody tr:hover {
+        background-color: rgb(193, 176, 205);
+        transition: all linear 500ms;
+      }
+
+      .cria-pedido {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        margin: 10px;
+      }
+
+      .cria-pedido a {
+        text-decoration: none;
+        background-color: indigo;
+        padding: 6px 20px;
+        border-radius: 5px;
+        color: #fff;
+        font-weight: 600;
+        transition: all linear 500ms;
+      }
+
+      .cria-pedido a:hover {
+        color: #000;
+        background-color: rgb(230, 219, 237);
+        transition: all linear 500ms;
+      }
+
+      .pagination {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+  <header th:replace="~{components/geral :: cabecalho}"></header>
+
+    <div class="cria-pedido">
+      <a href="#">Criar pedido</a>
+    </div>
+    <div class="lista-pedido">
+      <table>
+        <thead>
+          <tr class="indigo">
+            <th>#ID</th>
+            <th>Data</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <a href="#">1</a>
+            </td>
+            <td>10/05/2023</td>
+            <td>Pendente</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ul class="pagination">
+        <li class="disabled">
+          <a href="#!"><i class="material-icons">chevron_left</i></a>
+        </li>
+        <li class="active indigo"><a href="#!">1</a></li>
+        <li class="waves-effect"><a href="#!">2</a></li>
+        <li class="waves-effect"><a href="#!">3</a></li>
+        <li class="waves-effect"><a href="#!">4</a></li>
+        <li class="waves-effect"><a href="#!">5</a></li>
+        <li class="waves-effect">
+          <a href="#!"><i class="material-icons">chevron_right</i></a>
+        </li>
+      </ul>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  </body>
+</html>
