@@ -1,4 +1,4 @@
-package org.github.dumijdev.estoqueapp.model;
+package org.github.waldemberg.estoqueapp.model;
 
 public enum Status {
     PENDENTE("pendente"), FINALIZADO("finalizado"), CANCELADO("cancelado");

@@ -1,4 +1,4 @@
-package org.github.dumijdev.estoqueapp.model;
+package org.github.waldemberg.estoqueapp.model;
 
 import javax.persistence.*;
 

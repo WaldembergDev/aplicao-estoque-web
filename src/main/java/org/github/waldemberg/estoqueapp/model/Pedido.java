@@ -1,7 +1,9 @@
-package org.github.dumijdev.estoqueapp.model;
+package org.github.waldemberg.estoqueapp.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,8 +24,16 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Usuario requerente;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedido> itens;
+
+    public Pedido() {
+        itens = new ArrayList<>();
+    }
+
+    public String getDataInicioFormatada() {
+        return dataInicio.format(DateTimeFormatter.ofPattern("dd/MM/yyyy, hh:mm"));
+    }
 
     public long getId() {
         return id;
@@ -34,6 +44,10 @@ public class Pedido {
     }
 
     public boolean isVisto() {
+        return visto;
+    }
+
+    public boolean getVisto() {
         return visto;
     }
 

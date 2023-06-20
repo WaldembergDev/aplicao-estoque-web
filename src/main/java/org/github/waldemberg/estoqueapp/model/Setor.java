@@ -1,4 +1,4 @@
-package org.github.dumijdev.estoqueapp.model;
+package org.github.waldemberg.estoqueapp.model;
 
 import javax.persistence.*;
 
@@ -10,6 +10,14 @@ public class Setor {
     private short id;
     @Column(nullable = false, unique = true)
     private String nome;
+
+    public Setor() {
+
+    }
+
+    public Setor(String nome) {
+        this.nome = nome;
+    }
 
     public short getId() {
         return id;

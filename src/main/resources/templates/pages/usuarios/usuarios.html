@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
@@ -15,43 +19,7 @@
         padding: 0;
       }
 
-      header {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        background-color: indigo;
-        color: #fff;
-        height: 60px;
-      }
-
-      ul {
-        list-style: none;
-        display: flex;
-      }
-
-      nav ul li {
-        padding: 5px;
-        margin: 0 5px;
-      }
-
-      nav ul li a {
-        color: #fff;
-        text-decoration: none;
-        padding: 10px 15px;
-        transition: all linear 300ms;
-      }
-
-      nav ul li a:hover {
-        background-color: rgb(122, 69, 160);
-        transition: all linear 300ms;
-      }
-
-      h1 {
-        text-align: center;
-      }
-
-      .lista-produto {
+      .lista-usuario {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -61,7 +29,7 @@
 
       table {
         width: 80%;
-        border: indigo 1.5px solid;
+        border: #3f51b5 1.5px solid;
       }
 
       td,
@@ -89,58 +57,147 @@
         transition: all linear 500ms;
       }
 
-      .cria-produto {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
-        margin: 10px;
-      }
-
-      .cria-produto a {
-        text-decoration: none;
-        background-color: indigo;
-        padding: 6px 20px;
-        border-radius: 5px;
+      tbody tr:hover a {
         color: #fff;
-        font-weight: 600;
         transition: all linear 500ms;
       }
 
-      .cria-produto a:hover {
-        color: #000;
-        background-color: rgb(230, 219, 237);
-        transition: all linear 500ms;
+      .pagination {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      header {
+        margin-bottom: 30px;
       }
     </style>
   </head>
   <body>
     <header th:replace="~{components/geral :: cabecalho}"></header>
-    <div class="cria-produto">
-      <a href="#">Cadastrar usuário</a>
-    </div>
-    <div class="lista-produto">
+    <div class="lista-usuario">
       <table>
         <thead>
-          <tr>
-            <th>#ID</th>
+          <tr class="indigo">
             <th>Nome</th>
-            <th>usuário</th>
-            <th>setor</th>
+            <th>Usuário</th>
+            <th>Setor</th>
+            <th>
+              <a
+                class="waves-effect btn modal-trigger white"
+                href="#modal-novo-usuario"
+                ><i style="color: #2680ca" class="material-icons">add</i></a
+              >
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr th:if="${listaVazia}">
+            <td colspan="3">SEM USUARIOS</td>
+          </tr>
+          <tr th:unless="${listaVazia}" th:each="usuario : ${usuarios}">
             <td>
-              <a href="#">1</a>
+              <span th:text="${usuario.nome}"></span>
             </td>
-            <td><a href="#"> Jonas </a></td>
-            <td>jonas17</td>
-            <td>TI</td>
+            <td><span th:text="${usuario.username}"></span></td>
+            <td>
+              <span
+                th:text="${usuario.setor == null ? 'SEM SETOR' : usuario.setor.nome}"
+              ></span>
+            </td>
+            <td>
+              <a
+                th:href="@{'#modal-usuario-' + ${usuario.id}}"
+                class="btn-flat transparent modal-trigger"
+              >
+                <i style="color: #2680ca" class="material-icons">visibility</i>
+              </a>
+              <a
+                th:href="@{'#modal-eliminar-usuario-' + ${usuario.id}}"
+                class="btn-flat transparent modal-trigger"
+              >
+                <i style="color: #f44336" class="material-icons">delete</i>
+              </a>
+            </td>
           </tr>
         </tbody>
       </table>
-      <div>1..10</div>
+
+      <ul class="pagination">
+        <li th:class="${paginaAtual == 1 ? 'waves-effect' : 'disabled'}">
+          <a th:href="@{'/usuarios?page=' + ${paginaAtual-1}}"
+            ><i class="material-icons">chevron_left</i></a
+          >
+        </li>
+        <li
+          th:each="pagina : ${paginas}"
+          th:class="${paginaAtual == pagina} ? 'active indigo' : 'waves-effect'"
+        >
+          <a th:href="@{'/usuarios?page=' + ${pagina}}"
+            ><span th:text="${pagina}"></span
+          ></a>
+        </li>
+        <li class="waves-effect">
+          <a th:href="@{'/usuarios?page=' + ${paginaAtual+1}}"
+            ><i class="material-icons">chevron_right</i></a
+          >
+        </li>
+      </ul>
     </div>
+    <!-- Modal Structure Apagar usuario -->
+    <div
+      th:each="usuario : ${usuarios}"
+      th:id="'modal-eliminar-usuario-' + ${usuario.id}"
+      class="modal"
+    >
+      <div class="modal-content row">
+        <div class="col s12">Deseja mesmo apagar?</div>
+        <div>
+          <a
+            th:href="${(#mvc.url('UC#deletarUsuario').arg(0, usuario.id)).build()}"
+            class="red col s5 modal-close waves-effect waves-light btn-small"
+            >Eliminar</a
+          >
+          <a
+            href="#"
+            class="indigo col s5 modal-close waves-effect waves-light btn-small"
+            >Cancelar</a
+          >
+        </div>
+      </div>
+    </div>
+    <!-- Modal Ver detalhes de usuario -->
+    <div
+      th:each="usuario : ${usuarios}"
+      th:id="'modal-usuario-' + ${usuario.id}"
+      class="modal"
+      th:key="${usuario.id}"
+    >
+      <div
+        th:insert="~{components/geral :: usuario}"
+        class="modal-content"
+      ></div>
+    </div>
+    <!-- Modal Novo Usuario -->
+    <div id="modal-novo-usuario" class="modal">
+      <div
+        th:insert="~{components/geral :: novo-usuario}"
+        class="modal-content"
+      ></div>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.min.js"
+      integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+      crossorigin="anonymous"
+    ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".modal").modal();
+      });
+
+      $(document).ready(function () {
+        $("select").formSelect();
+      });
+    </script>
   </body>
 </html>

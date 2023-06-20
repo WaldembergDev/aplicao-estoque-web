@@ -1,6 +1,5 @@
-package org.github.dumijdev.estoqueapp.model;
+package org.github.waldemberg.estoqueapp.model;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -10,8 +9,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,9 @@ public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "gn_usuario")
     private int id;
+    @NotEmpty(message = "Nome não pode estar vazio")
+    @NotBlank
+    @NotNull
     private String nome;
     @Column(name = "ativo")
     private boolean habilitado;
@@ -35,7 +39,7 @@ public class Usuario implements UserDetails {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Autoridade autoridade;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Setor setor;
 
     public int getId() {

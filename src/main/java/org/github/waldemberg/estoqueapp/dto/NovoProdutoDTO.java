@@ -1,4 +1,4 @@
-package org.github.dumijdev.estoqueapp.dto;
+package org.github.waldemberg.estoqueapp.dto;
 
 public class NovoProdutoDTO {
     private String nome;

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  lang="pt"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+    />
+    <title>EstoqueApp</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #3f51b5;
+        color: #fff;
+        height: 60px;
+        margin-bottom: 30px;
+      }
+
+      .form {
+        width: 500px;
+        padding: 10px;
+        padding-bottom: 30px;
+      }
+
+      form button {
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <header th:replace="~{components/geral :: cabecalho}"></header>
+
+    <div method="post" class="z-depth-1 grey lighten-4 row form">
+      <form class="row col s12 align" method="post">
+        <div class="input-field col s11">
+          <label for="nome">Nome</label>
+          <input
+            id="nome"
+            name="nome"
+            type="text"
+            th:value="${usuario.nome}"
+            readonly
+          />
+        </div>
+        <div class="align">
+          <button
+            id="edit-name"
+            type="button"
+            class="waves-effect waves-light indigo btn-small col s1"
+          >
+            <i class="material-icons">edit</i>
+          </button>
+          <button
+            id="btn-name-sbt"
+            type="submit"
+            class="hide waves-effect waves-light btn-small"
+          >
+            Atualizar
+          </button>
+        </div>
+      </form>
+      <form class="row col s12 align" method="post">
+        <div class="input-field col s11">
+          <label for="senha">Senha</label>
+          <input id="senha" name="senha" type="text" readonly />
+        </div>
+        <div class="align">
+          <button
+            id="edit-pwd"
+            type="button"
+            class="waves-effect waves-light indigo btn-small col s1"
+          >
+            <i class="material-icons icon-pwd">edit</i>
+          </button>
+          <button
+            id="btn-pwd-sbt"
+            type="submit"
+            class="hide waves-effect waves-light btn-small"
+          >
+            Atualizar
+          </button>
+        </div>
+      </form>
+      <div class="input-field col s12">
+        <label for="username">Usuário</label>
+        <input
+          id="username"
+          name="username"
+          type="text"
+          th:value="${usuario.username}"
+          readonly
+        />
+      </div>
+      <div class="input-field col s12">
+        <label for="setor">Setor</label>
+        <input
+          id="setor"
+          type="text"
+          th:value="${usuario.setor == null ? 'SEM SETOR' : usuario.setor.nome }"
+          readonly
+        />
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      let btnName = document.getElementById("edit-name");
+      let btnPwd = document.getElementById("edit-pwd");
+      let icon = document.querySelector("form i.material-icons");
+      let iconPwd = document.querySelector(".icon-pwd");
+      let nomeInput = document.getElementById("nome");
+      let senhaInput = document.getElementById("senha");
+
+      btnName.addEventListener("click", () => {
+        console.log(nomeInput.readOnly, nomeInput);
+
+        if (!nomeInput.readOnly) {
+          icon.innerHTML = "edit";
+
+          document.getElementById("btn-name-sbt").click();
+
+          nomeInput.readOnly = !nomeInput.readOnly;
+        } else {
+          icon.innerHTML = "done";
+
+          nomeInput.readOnly = !nomeInput.readOnly;
+
+          console.log(nomeInput.readOnly, !nomeInput.readOnly);
+        }
+      });
+
+      btnPwd.addEventListener("click", () => {
+        console.log(senhaInput.readOnly, senhaInput);
+
+        if (!senhaInput.readOnly) {
+          iconPwd.innerHTML = "edit";
+
+          document.getElementById("btn-pwd-sbt").click();
+
+          senhaInput.readOnly = !senhaInput.readOnly;
+        } else {
+          iconPwd.innerHTML = "done";
+
+          senhaInput.readOnly = !senhaInput.readOnly;
+
+          console.log(senhaInput.readOnly, !senhaInput.readOnly);
+        }
+      });
+    </script>
+  </body>
+</html>

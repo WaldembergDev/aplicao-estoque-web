@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -18,22 +18,25 @@
     <header th:fragment="cabecalho">
       <nav class="indigo">
         <div class="nav-wrapper">
-          <a class="left" href="#">Logo</a>
+          <a class="left" th:href="@{/}"><i class="material-icons">home</i></a>
           <ul class="right">
             <li>
               <a th:href="@{/pedidos/meus-pedidos}">Meus pedidos</a>
             </li>
-            <li>
+            <li th:if='${#lists.contains(papeis, "ler_pedido")}'>
               <a th:href="@{/pedidos}">Pedidos</a>
             </li>
-            <li>
+            <li th:if='${#lists.contains(papeis, "ler_produto")}'>
               <a th:href="@{/produtos}">Produtos</a>
+            </li>
+            <li th:if='${#lists.contains(papeis, "ler_usuario")}'>
+              <a th:href="@{/usuarios}">Usuários</a>
             </li>
             <li>
               <a th:href="@{/perfil}">Perfil</a>
             </li>
             <li>
-              <a th:href="@{#}">Sair</a>
+              <a th:href="@{/logout}">Sair</a>
             </li>
           </ul>
         </div>
@@ -42,31 +45,86 @@
     <form
       class="row"
       style="width: 80%; margin-top: 50px"
-      th:fragment="novo-pedido"
+      th:fragment="novo-meu-pedido"
+      th:action="@{/pedidos/meus-pedidos}"
+      method="post"
     >
-      <div class="input-field col s12">
-        <select name="produtos" multiple>
-          <option value="" disabled selected>Escolha os produtos</option>
-          <option value="1">Option 1</option>
-          <option value="2">Option 2</option>
-          <option value="3">Option 3</option>
-        </select>
-        <label>Produtos</label>
+      <div class="row col s12">
+        <div class="input-field col s8 m12">
+          <select class="browser-default" id="sel">
+            <option
+              th:id="${produto.id}"
+              th:each="produto : ${produtos}"
+              th:value="${produto.id}"
+            >
+              <span th:text="${produto.nome}"></span>
+            </option>
+          </select>
+        </div>
+        <div class="input-field col s2 m10">
+          <input class="validate" type="number" id="qtd" value="10" min="1" />
+        </div>
+        <div class="input-field col s2 m2 row">
+          <button
+            id="add-btn"
+            type="button"
+            class="waves-effect waves-light indigo btn-small col m12 s12"
+          >
+            <i class="material-icons">add</i>
+          </button>
+        </div>
       </div>
       <div class="input-field col s12">
-        <label for="quantidade">Quantidade</label>
-        <input type="text" name="quantidade" id="quantidade" />
-      </div>
-      <div class="input-field col s12">
-        <label for="quantidadeMinima">Quantidade mínima</label>
-        <input type="text" name="quantidadeMinima" id="quantidadeMinima" />
+        <div class="chips"></div>
       </div>
 
-      <input
-        class="waves-effect btn-small indigo col s12"
-        type="submit"
-        value="Cadastrar"
-      />
+      <input type="text" id="prd" class="hide" name="produtos" />
+
+      <button class="waves-effect btn-small indigo col s12" type="submit">
+        Cadastrar
+      </button>
+    </form>
+    <form
+      class="row"
+      style="width: 80%; margin-top: 50px"
+      th:fragment="novo-pedido"
+      th:action="@{/pedidos}"
+      method="post"
+    >
+      <div class="row col s12">
+        <div class="input-field col s8 m12">
+          <select class="browser-default" id="sel">
+            <option
+              th:id="${produto.id}"
+              th:each="produto : ${produtos}"
+              th:value="${produto.id}"
+            >
+              <span th:text="${produto.nome}"></span>
+            </option>
+          </select>
+        </div>
+        <div class="input-field col s2 m10">
+          <input class="validate" type="number" id="qtd" value="10" min="1" />
+        </div>
+        <div class="input-field col s2 m2 row">
+          <button
+            id="add-btn"
+            type="button"
+            class="waves-effect waves-light indigo btn-small col m12 s12"
+          >
+            Adicionar item
+          </button>
+        </div>
+      </div>
+      <div class="input-field col s12">
+        <div class="chips"></div>
+      </div>
+
+      <input type="text" id="prd" class="hide" name="produtos" />
+
+      <button class="waves-effect btn-small indigo col s12" type="submit">
+        Concluir Pedido
+      </button>
     </form>
 
     <form
@@ -92,18 +150,33 @@
         Cadastrar
       </button>
     </form>
-    <form class="row" th:fragment="novo-usuario">
+    <form method="post" class="row" th:fragment="novo-usuario">
       <div class="input-field">
         <label for="nome">Nome</label>
         <input type="text" name="nome" id="nome" />
       </div>
       <div class="input-field">
-        <label for="quantidade">Quantidade</label>
-        <input type="text" name="quantidade" id="quantidade" />
+        <label for="username">Usuario</label>
+        <input type="text" name="username" id="username" />
       </div>
       <div class="input-field">
-        <label for="quantidadeMinima">Quantidade mínima</label>
-        <input type="text" name="quantidadeMinima" id="quantidadeMinima" />
+        <select class="browser-default" name="setor">
+          <option
+            th:each="setor : ${setores}"
+            th:id="${setor.id}"
+            th:value="${setor.nome}"
+          >
+            <span th:text="${setor.nome}"></span>
+          </option>
+        </select>
+      </div>
+      <div class="input-field">
+        <label for="senha">Senha</label>
+        <input type="password" name="senha" id="quantidadeMinima" />
+      </div>
+      <div class="input-field">
+        <label for="verifica-senha">Confirme a senha</label>
+        <input type="password" id="verifica-senha" />
       </div>
 
       <button class="waves-effect btn-small indigo col s12" type="submit">
@@ -142,7 +215,98 @@
           />
         </div>
         <div class="row">
-          <button class="waves-effect col s12 btn-small indigo" type="submit">
+          <button
+            th:if='${#lists.contains(papeis, "atualizar_produto")}'
+            class="waves-effect col s12 btn-small indigo"
+            type="submit"
+          >
+            Atualizar
+          </button>
+        </div>
+      </form>
+    </div>
+    <div th:fragment="usuario">
+      <form
+        class="u"
+        th:action="@{'/usuarios/' + ${usuario.username}}"
+        method="post"
+      >
+        <div class="row">
+          <label class="col s6">Nome</label>
+          <input
+            th:value="${usuario.nome}"
+            name="nome"
+            id="nome"
+            class="input-field col s6"
+          />
+        </div>
+        <div class="col s12 row">
+          <select name="setor" class="browser-default">
+            <option
+              value=""
+              th:selected="${usuario.setor == null}"
+            >
+              SEM SETOR
+            </option>
+            <option
+              th:each="setor : ${setores}"
+              th:value="${setor.nome}"
+              th:selected="${usuario.setor != null and setor.id == usuario.setor.id}"
+              th:text="${setor.nome}"
+            ></option>
+          </select>
+        </div>
+        <div class="row">
+          <button
+            th:if='${#lists.contains(papeis, "atualizar_usuario")}'
+            class="waves-effect col s12 btn-small indigo"
+            type="submit"
+          >
+            Atualizar
+          </button>
+        </div>
+      </form>
+    </div>
+    <div th:fragment="pedido">
+      <form th:action="@{'/pedidos/' + ${pedido.id}}" method="post">
+        <div class="row">
+          <label class="col s12">Nome do requerente</label>
+          <input
+            th:value="${pedido.requerente.nome}"
+            name="nome"
+            id="nome"
+            class="input-field col s12"
+            readonly
+          />
+        </div>
+        <div class="row">
+          <div class="col s12 row">
+            <label class="col s6">Visto</label>
+            <span
+              class="col s6"
+              th:text="${pedido.visto ? 'Visto' : 'Não visto'}"
+            ></span>
+          </div>
+          <div class="col s12 row">
+            <label class="col s6">Status</label>
+            <span class="col s6" th:text="${pedido.status}"></span>
+          </div>
+        </div>
+        <div class="col s12">
+          <h6>Produtos</h6>
+          <ul>
+            <li class="row" th:each="item : ${pedido.itens}">
+              <span class="col s6" th:text="${item.produto.nome}"></span>
+              <span class="col s6" th:text="${item.quantidade + ' Utd'}"></span>
+            </li>
+          </ul>
+        </div>
+        <div class="row">
+          <button
+            th:if='${#lists.contains(papeis, "atualizar_pedido")}'
+            class="waves-effect col s12 btn-small indigo"
+            type="submit"
+          >
             Atualizar
           </button>
         </div>
@@ -158,6 +322,55 @@
       $(document).ready(function () {
         $("select").formSelect();
       });
+    </script>
+    <script>
+      let btnAdd = document.getElementById("add-btn");
+      let qtd = document.getElementById("qtd");
+      let prd = document.getElementById("prd");
+      let chips = document.getElementsByClassName("chips")[0];
+      let select = document.querySelector("select");
+      let products = [];
+
+      btnAdd.addEventListener("click", () => {
+        let prdId = parseInt(select.value);
+        let prdName = select.options[select.selectedIndex].text;
+        let prdQtd = parseInt(qtd.value);
+
+        console.log(prdId, prdName, prdQtd);
+        console.log(!products.find((p) => p.id === prdId));
+
+        if (!products.find((p) => p.id == prdId)) {
+          products.push({ id: prdId, name: prdName, qtd: prdQtd });
+        } else {
+          let p = products.find((p) => p.id == prdId);
+
+          console.log(p);
+
+          p.qtd += prdQtd;
+        }
+
+        criarChips(products);
+      });
+
+      function eliminaItem(id) {
+        products = products.filter((p) => p.id != id);
+        criarChips(products);
+      }
+
+      function criarChips(lista = []) {
+        chips.innerHTML = "";
+        prd.value = "";
+
+        for (let elem of lista) {
+          prd.value += `${elem.id}#${elem.qtd};`;
+          chips.innerHTML += `<div class="chip">${elem.name}(${elem.qtd})<i onclick="eliminaItem(${elem.id})" class="close material-icons">close</i></div>`;
+        }
+
+        if (prd.value.endsWith(";"))
+          prd.value = prd.value.substring(0, prd.value.length - 1);
+
+        console.log(prd.value);
+      }
     </script>
   </body>
 </html>

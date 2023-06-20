@@ -1,18 +1,26 @@
-package org.github.dumijdev.estoqueapp.service;
+package org.github.waldemberg.estoqueapp.service;
 
-import org.github.dumijdev.estoqueapp.dto.NovoPedidoDTO;
-import org.github.dumijdev.estoqueapp.model.Pedido;
+import org.github.waldemberg.estoqueapp.dto.NovoPedidoDTO;
+import org.github.waldemberg.estoqueapp.model.Pedido;
+import org.github.waldemberg.estoqueapp.util.EstoqueAbaixo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface PedidoService {
-    void salvar(NovoPedidoDTO pedido);
-    void atualizarPedido(Pedido pedido);
-    List<Pedido> listarTodos(int pagina);
+    ArrayList<EstoqueAbaixo> salvar(NovoPedidoDTO pedido);
 
-    void deletar(Long id);
+    List<Pedido> listarTodos(int pagina, String status);
 
     void atualizar(Pedido pedido);
 
     int totalPaginas();
+
+    void concluir(long id);
+
+    void cancelar(long id);
+
+    List<Pedido> buscarMeusPedidos(int pagina, String status);
+
+    void aceitar(Long id);
 }

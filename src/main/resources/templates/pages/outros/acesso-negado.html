@@ -19,13 +19,15 @@
         padding: 0;
       }
 
-      h1 {
+      h2, h4 {
         text-align: center;
       }
     </style>
   </head>
   <body>
-    <h1 >Acesso negado</h1>
+    <header th:replace="~{components/geral :: cabecalho}"></header>
+    <h2>Ops! Acesso negado ou aconteceu algum erro!</h1>
+    <h4>Tente mais tarde.</h4>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   </body>
 </html>

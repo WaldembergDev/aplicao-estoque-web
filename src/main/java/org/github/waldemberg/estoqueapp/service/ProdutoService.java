@@ -1,16 +1,15 @@
-package org.github.dumijdev.estoqueapp.service;
+package org.github.waldemberg.estoqueapp.service;
 
-import org.github.dumijdev.estoqueapp.dto.NovoProdutoDTO;
-import org.github.dumijdev.estoqueapp.model.Produto;
-import org.springframework.data.domain.Pageable;
+import org.github.waldemberg.estoqueapp.dto.NovoProdutoDTO;
+import org.github.waldemberg.estoqueapp.model.Produto;
 
 import java.util.List;
 
 public interface ProdutoService {
     void salvar(NovoProdutoDTO produto);
-    List<Produto> listarTodos(int page);
+    List<Produto> listarTodos(int page, String status);
 
-    int totalPaginas();
+    int totalPaginas(String status);
 
     void atualizar(Produto produto);
 

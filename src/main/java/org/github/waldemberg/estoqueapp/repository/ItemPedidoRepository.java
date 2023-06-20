@@ -1,6 +1,6 @@
-package org.github.dumijdev.estoqueapp.repository;
+package org.github.waldemberg.estoqueapp.repository;
 
-import org.github.dumijdev.estoqueapp.model.ItemPedido;
+import org.github.waldemberg.estoqueapp.model.ItemPedido;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 

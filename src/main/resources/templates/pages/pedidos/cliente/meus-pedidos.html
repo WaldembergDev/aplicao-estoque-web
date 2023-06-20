@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -9,28 +9,14 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
     />
     <link
-            href="https://fonts.googleapis.com/icon?family=Material+Icons"
-            rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
     />
     <title>EstoqueApp</title>
     <style>
       * {
         margin: 0;
         padding: 0;
-      }
-
-      header {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        background-color: indigo;
-        color: #fff;
-        height: 60px;
-      }
-
-      h1 {
-        text-align: center;
       }
 
       .lista-pedido {
@@ -43,7 +29,7 @@
 
       table {
         width: 80%;
-        border: indigo 1.4px solid;
+        border: #3F51B5 1.5px solid;
       }
 
       td,
@@ -51,8 +37,18 @@
         text-align: center;
       }
 
-      thead tr {
+      thead {
+        background-color: indigo;
         color: #fff;
+      }
+
+      tr {
+        max-height: 50px;
+      }
+
+      thead tr,
+      thead td {
+        background-color: indigo;
       }
 
       tbody tr {
@@ -65,74 +61,268 @@
         transition: all linear 500ms;
       }
 
-      .cria-pedido {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
-        margin: 10px;
-      }
-
-      .cria-pedido a {
-        text-decoration: none;
-        background-color: indigo;
-        padding: 6px 20px;
-        border-radius: 5px;
+      tbody tr:hover a {
         color: #fff;
-        font-weight: 600;
-        transition: all linear 500ms;
-      }
-
-      .cria-pedido a:hover {
-        color: #000;
-        background-color: rgb(230, 219, 237);
         transition: all linear 500ms;
       }
 
       .pagination {
         margin-top: 20px;
+        text-align: center;
+      }
+
+      header {
+        margin-bottom: 30px;
+      }
+
+      #filtro {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
       }
     </style>
   </head>
   <body>
-  <header th:replace="~{components/geral :: cabecalho}"></header>
-
-    <div class="cria-pedido">
-      <a href="#">Criar pedido</a>
+    <header th:replace="~{components/geral :: cabecalho}"></header>
+    <div class="row center container">
+      <form
+        id="filtro"
+        class="row container"
+        th:action="@{/pedidos}"
+        method="get"
+      >
+        <label class="col s3">
+          <input
+            type="checkbox"
+            value="finalizado"
+            name="status"
+            id="finalizado"
+          />
+          <span>Finalizado</span></label
+        >
+        <label class="col s3">
+          <input
+            type="checkbox"
+            value="cancelado"
+            name="status"
+            id="cancelado"
+          />
+          <span>Cancelado</span>
+        </label>
+        <label class="col s3"
+          ><input
+            type="checkbox"
+            value="pendente"
+            name="status"
+            id="pendente"
+          />
+          <span>Pendente</span></label
+        >
+        <button style="width: fit-content;" class="waves-effect btn-small indigo col s3" type="submit">
+          <i class="material-icons">search</i>
+        </button>
+      </form>
+    </div>
+    <div class="red-text" style="text-align: center;" th:if="${erro != null}">
+      <span class="red-text" th:text="${erro.mensagem}"></span>
     </div>
     <div class="lista-pedido">
       <table>
         <thead>
           <tr class="indigo">
-            <th>#ID</th>
+            <th>ID</th>
             <th>Data</th>
             <th>Status</th>
+            <th>
+              <a
+                th:if="${#lists.contains(papeis, &quot;criar_pedido&quot;)}"
+                class="waves-effect btn modal-trigger white"
+                href="#modal-novo-pedido"
+                ><i style="color: #3F51B5" class="material-icons">add</i></a
+              >
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr th:if="${listaVazia}">
+            <td colspan="6">SEM PEDIDOS</td>
+          </tr>
+          <tr th:unless="${listaVazia}" th:each="pedido : ${pedidos}">
             <td>
-              <a href="#">1</a>
+              <span th:text="${pedido.id}"></span>
             </td>
-            <td>10/05/2023</td>
-            <td>Pendente</td>
+            <td><span th:text="${pedido.getDataInicioFormatada()}"></span></td>
+            <td><span th:text="${pedido.status}"></span></td>
+            <td>
+              <a
+                th:href="@{'#modal-pedido-' + ${pedido.id}}"
+                class="btn-flat transparent modal-trigger"
+              >
+                <i style="color: #3F51B5" class="material-icons">visibility</i>
+              </a>
+              <a
+                th:if="${#lists.contains(papeis, &quot;cancelar_pedido&quot;)}"
+                th:href="@{'#modal-eliminar-pedido-' + ${pedido.id}}"
+                class="btn-flat transparent modal-trigger"
+              >
+                <i style="color: #f44336" class="material-icons">delete</i>
+              </a>
+            </td>
           </tr>
         </tbody>
       </table>
 
       <ul class="pagination">
-        <li class="disabled">
-          <a href="#!"><i class="material-icons">chevron_left</i></a>
+        <li th:class="${paginaAtual == 1 ? 'waves-effect' : 'disabled'}">
+          <a th:href="@{'/pedidos?page=' + ${paginaAtual-1}}"
+            ><i class="material-icons">chevron_left</i></a
+          >
         </li>
-        <li class="active indigo"><a href="#!">1</a></li>
-        <li class="waves-effect"><a href="#!">2</a></li>
-        <li class="waves-effect"><a href="#!">3</a></li>
-        <li class="waves-effect"><a href="#!">4</a></li>
-        <li class="waves-effect"><a href="#!">5</a></li>
+        <li
+          th:each="pagina : ${paginas}"
+          th:class="${paginaAtual == pagina} ? 'active indigo' : 'waves-effect'"
+        >
+          <a th:href="@{'/pedidos?page=' + ${pagina}}"
+            ><span th:text="${pagina}"></span
+          ></a>
+        </li>
         <li class="waves-effect">
-          <a href="#!"><i class="material-icons">chevron_right</i></a>
+          <a th:href="@{'/pedidos?page=' + ${paginaAtual+1}}"
+            ><i class="material-icons">chevron_right</i></a
+          >
         </li>
       </ul>
+      <!-- Modal Structure -->
+      <div id="modal-novo-pedido" class="modal">
+        <div
+          th:insert="~{components/geral :: novo-meu-pedido}"
+          class="modal-content"
+        ></div>
+      </div>
+      <!-- Modal Structure -->
+      <div
+        th:each="pedido : ${pedidos}"
+        th:id="'modal-pedido-' + ${pedido.id}"
+        class="modal"
+      >
+        <div
+          th:insert="~{components/geral :: pedido}"
+          class="modal-content"
+        ></div>
+      </div>
+      <!-- Modal Structure Apagar Pedido -->
+      <div
+        th:each="pedido : ${pedidos}"
+        th:id="'modal-eliminar-pedido-' + ${pedido.id}"
+        class="modal"
+      >
+        <div class="modal-content row">
+          <div class="col s12">Deseja mesmo apagar?</div>
+          <div>
+            <a
+              th:href="${(#mvc.url('PC#negarPedido').arg(0, pedido.id)).build()}"
+              class="red col s5 modal-close waves-effect waves-light btn-small"
+              >Eliminar</a
+            >
+            <a
+              href="#"
+              class="indigo col s5 modal-close waves-effect waves-light btn-small"
+              >Cancelar</a
+            >
+          </div>
+        </div>
+      </div>
     </div>
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.min.js"
+      integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+      crossorigin="anonymous"
+    ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".modal").modal();
+      });
+
+      $(document).ready(function () {
+        $("select").formSelect();
+      });
+    </script>
+    <script>
+      let btnAdd = document.getElementById("add-btn");
+      let qtd = document.getElementById("qtd");
+      let prd = document.getElementById("prd");
+      let chips = document.getElementsByClassName("chips")[0];
+      let select = document.querySelector("select");
+      let products = [];
+
+      btnAdd.addEventListener("click", () => {
+        let prdId = parseInt(select.value);
+        let prdName = select.options[select.selectedIndex].text;
+        let prdQtd = parseInt(qtd.value);
+
+        console.log(prdId, prdName, prdQtd);
+        console.log(!products.find((p) => p.id === prdId));
+
+        if (!products.find((p) => p.id == prdId)) {
+          products.push({ id: prdId, name: prdName, qtd: prdQtd });
+        } else {
+          let p = products.find((p) => p.id == prdId);
+
+          console.log(p);
+
+          p.qtd += prdQtd;
+        }
+
+        criarChips(products);
+      });
+
+      function eliminaItem(id) {
+        products = products.filter((p) => p.id != id);
+        criarChips(products);
+      }
+
+      function criarChips(lista = []) {
+        chips.innerHTML = "";
+        prd.value = "";
+
+        for (let elem of lista) {
+          prd.value += `${elem.id}#${elem.qtd};`;
+          chips.innerHTML += `<div class="chip">${elem.name}(${elem.qtd})<i onclick="eliminaItem(${elem.id})" class="close material-icons">close</i></div>`;
+        }
+
+        if (prd.value.endsWith(";"))
+          prd.value = prd.value.substring(0, prd.value.length - 1);
+
+        console.log(prd.value);
+      }
+    </script>
+    <script>
+      document
+        .getElementById("filtro")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Impede o envio padrão do formulário
+
+          // Obtém os checkboxes selecionados
+          var checkboxes = document.querySelectorAll(
+            'input[name="status"]:checked'
+          );
+
+          // Cria um array para armazenar os valores selecionados
+          var valoresSelecionados = [];
+
+          // Itera sobre os checkboxes selecionados e adiciona os valores ao array
+          checkboxes.forEach(function (checkbox) {
+            valoresSelecionados.push(checkbox.value);
+          });
+
+          // Constrói a URL com os valores selecionados
+          var url = "/pedidos/meus-pedidos?status=" + valoresSelecionados.join(",");
+
+          // Redireciona para a URL desejada
+          window.location.href = url;
+        });
+    </script>
   </body>
 </html>

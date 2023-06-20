@@ -1,8 +1,11 @@
-package org.github.dumijdev.estoqueapp.controlador;
+package org.github.waldemberg.estoqueapp.controlador;
 
-import org.github.dumijdev.estoqueapp.dto.NovoProdutoDTO;
-import org.github.dumijdev.estoqueapp.model.Produto;
-import org.github.dumijdev.estoqueapp.service.ProdutoService;
+import org.github.waldemberg.estoqueapp.anotacao.AtualizarProduto;
+import org.github.waldemberg.estoqueapp.anotacao.DeletarProduto;
+import org.github.waldemberg.estoqueapp.anotacao.LerProdutos;
+import org.github.waldemberg.estoqueapp.dto.NovoProdutoDTO;
+import org.github.waldemberg.estoqueapp.model.Produto;
+import org.github.waldemberg.estoqueapp.service.ProdutoService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -11,6 +14,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.stream.IntStream;
+
+import static org.github.waldemberg.estoqueapp.util.AutoridadeUtils.adicionaPapeis;
 
 @RequestMapping("/produtos")
 @Controller
@@ -22,16 +27,18 @@ public class ProdutoControlador {
         this.service = service;
     }
 
+    @LerProdutos
     @GetMapping
-    public ModelAndView listarTodos(@PageableDefault Pageable pagina) {
-        var produtos = service.listarTodos(pagina.getPageNumber());
-        var paginas = service.totalPaginas() == 0 ? new int[]{1} : IntStream.rangeClosed(1, service.totalPaginas()).toArray();
+    public ModelAndView listarTodos(@PageableDefault Pageable pagina,
+                                    @RequestParam(name = "", required = false) String status) {
+        var produtos = service.listarTodos(pagina.getPageNumber(), status);
+        var paginas = service.totalPaginas(status) == 0 ? new int[]{1} : IntStream.rangeClosed(1, service.totalPaginas(status)).toArray();
 
-        return new ModelAndView("pages/produtos/produtos")
+        return adicionaPapeis(new ModelAndView("pages/produtos/produtos")
                 .addObject("produtos", produtos)
                 .addObject("listaVazia", produtos.isEmpty())
                 .addObject("paginas", paginas)
-                .addObject("paginaAtual", pagina.getPageNumber() < 2 ? 1 : pagina.getPageNumber() + 1);
+                .addObject("paginaAtual", pagina.getPageNumber() < 2 ? 1 : pagina.getPageNumber() + 1));
     }
 
     @PostMapping
@@ -44,6 +51,7 @@ public class ProdutoControlador {
         return "redirect:/produtos";
     }
 
+    @AtualizarProduto
     @PostMapping("/{id}")
     public String atulizarProduto(
             @PathVariable("id") Long id,
@@ -55,6 +63,7 @@ public class ProdutoControlador {
         return "redirect:/produtos";
     }
 
+    @DeletarProduto
     @GetMapping("/{id}/deletar")
     public String deletarProduto(@PathVariable("id") Long id) {
 

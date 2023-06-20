@@ -1,11 +1,12 @@
-package org.github.dumijdev.estoqueapp.service;
+package org.github.waldemberg.estoqueapp.service;
 
-import org.github.dumijdev.estoqueapp.dto.NovoProdutoDTO;
-import org.github.dumijdev.estoqueapp.model.Produto;
-import org.github.dumijdev.estoqueapp.repository.ProdutoRepository;
+import org.github.waldemberg.estoqueapp.dto.NovoProdutoDTO;
+import org.github.waldemberg.estoqueapp.model.Produto;
+import org.github.waldemberg.estoqueapp.repository.ProdutoRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -30,14 +31,35 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
-    public List<Produto> listarTodos(int page) {
-        var pagina = PageRequest.of(page > 1 ? page - 1 : 0, 10);
-        return repository.findAll(pagina).getContent();
+    public List<Produto> listarTodos(int page, String status) {
+        var pagina = PageRequest.of(page > 1 ? page - 1 : 0, 5);
+
+        if (status == null || "".equalsIgnoreCase(status))
+            return repository.findAll(pagina).getContent();
+
+        LinkedList<Produto> produtos = new LinkedList<>();
+
+        for (var s1 : status.split(",")) {
+            produtos.addAll(
+                    status.equalsIgnoreCase("alerta") ?
+                    repository.buscarProdutosEmAtencao(pagina).getContent() :
+                    repository.buscarProdutosCriticos(pagina).getContent()
+            );
+        }
+
+        return produtos;
     }
 
     @Override
-    public int totalPaginas() {
-        return repository.findAll(PageRequest.of(0, 10)).getTotalPages();
+    public int totalPaginas(String status) {
+        var pagina = PageRequest.of(0, 5);
+
+        if (status == null || "".equalsIgnoreCase(status))
+            return repository.findAll(pagina).getTotalPages();
+
+        return status.equalsIgnoreCase("alerta") ?
+                repository.buscarProdutosEmAtencao(pagina).getTotalPages() :
+                repository.buscarProdutosCriticos(pagina).getTotalPages();
     }
 
     @Override

@@ -1,6 +1,6 @@
-package org.github.dumijdev.estoqueapp.configuration.service;
+package org.github.waldemberg.estoqueapp.configuration.service;
 
-import org.github.dumijdev.estoqueapp.repository.UsuarioRepository;
+import org.github.waldemberg.estoqueapp.repository.UsuarioRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

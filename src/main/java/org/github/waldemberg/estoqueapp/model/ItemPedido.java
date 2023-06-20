@@ -1,4 +1,4 @@
-package org.github.dumijdev.estoqueapp.model;
+package org.github.waldemberg.estoqueapp.model;
 
 import javax.persistence.*;
 
@@ -12,6 +12,13 @@ public class ItemPedido {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Produto produto;
+
+    public ItemPedido() {}
+
+    public ItemPedido(int quantidade, Produto produto) {
+        this.quantidade = quantidade;
+        this.produto = produto;
+    }
 
     public long getId() {
         return id;
