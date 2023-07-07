@@ -1,5 +1,7 @@
 package org.github.waldemberg.estoqueapp.model;
 
+import org.github.waldemberg.estoqueapp.exceptions.EstoqueInsuficienteException;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -59,7 +61,9 @@ public class Produto {
         return quantidadeMinima;
     }
 
-    public void diminuiEstoque(int qtd) {
+    public void diminuiEstoque(int qtd) throws EstoqueInsuficienteException {
+        if (qtd > quantidade)
+            throw new EstoqueInsuficienteException(nome);
         setQuantidade(Math.max(quantidade - qtd, 0));
     }
 

@@ -1,13 +1,15 @@
 package org.github.waldemberg.estoqueapp.service;
 
 import org.github.waldemberg.estoqueapp.dto.NovoPedidoDTO;
-import org.github.waldemberg.estoqueapp.model.ItemPedido;
-import org.github.waldemberg.estoqueapp.model.Pedido;
-import org.github.waldemberg.estoqueapp.model.Status;
-import org.github.waldemberg.estoqueapp.repository.PedidoRepository;
-import org.github.waldemberg.estoqueapp.repository.ProdutoRepository;
+import org.github.waldemberg.estoqueapp.exceptions.EstoqueInsuficienteException;
+import org.github.waldemberg.estoqueapp.model.*;
+import org.github.waldemberg.estoqueapp.model.mail.EmailModel;
+import org.github.waldemberg.estoqueapp.model.mail.EmailType;
+import org.github.waldemberg.estoqueapp.model.mail.EstoqueAbaixoModel;
+import org.github.waldemberg.estoqueapp.repository.*;
 import org.github.waldemberg.estoqueapp.util.EstoqueAbaixo;
 import org.github.waldemberg.estoqueapp.util.UsuarioUtils;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,10 +24,19 @@ import static org.springframework.data.domain.PageRequest.of;
 public class PedidoServiceImpl implements PedidoService {
     private final PedidoRepository repository;
     private final ProdutoRepository produtoRepository;
+    private final EmailService emailService;
+    private final UsuarioRepository usuarioRepository;
+    private final PapelRepository papelRepository;
+    private final SetorRepository setorRepository;
 
-    public PedidoServiceImpl(PedidoRepository repository, ProdutoRepository produtoRepository) {
+    public PedidoServiceImpl(PedidoRepository repository, ProdutoRepository produtoRepository, EmailService emailService,
+                             UsuarioRepository usuarioRepository, PapelRepository papelRepository, SetorRepository setorRepository) {
         this.repository = repository;
         this.produtoRepository = produtoRepository;
+        this.emailService = emailService;
+        this.usuarioRepository = usuarioRepository;
+        this.papelRepository = papelRepository;
+        this.setorRepository = setorRepository;
     }
 
     @Override
@@ -97,16 +108,6 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public void concluir(long id) {
-        var pedido = repository.findById(id).orElseThrow();
-
-        pedido.setStatus(Status.FINALIZADO);
-
-        for (var item : pedido.getItens()) {
-
-            item.getProduto().diminuiEstoque(item.getQuantidade());
-
-            produtoRepository.save(item.getProduto());
-        }
     }
 
     @Override
@@ -142,7 +143,7 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public void aceitar(Long id) {
+    public void aceitar(Long id) throws EstoqueInsuficienteException {
         var pedido = repository.findById(id).orElseThrow();
 
         pedido.setStatus(Status.FINALIZADO);
@@ -150,12 +151,34 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setAtendente(UsuarioUtils.getUsuario());
         pedido.setDataFim(LocalDateTime.now());
 
-        pedido.getItens().forEach(item -> {
+        for (ItemPedido item : pedido.getItens()) {
             item.getProduto().diminuiEstoque(item.getQuantidade());
+        }
 
+        for (ItemPedido item : pedido.getItens()) {
             produtoRepository.save(item.getProduto());
-        });
+        }
 
         repository.save(pedido);
+
+        var ps = produtoRepository.buscarProdutosCriticos(PageRequest.ofSize(100)).getContent();
+        System.out.println(ps.size());
+        if (!ps.isEmpty()) {
+
+            EmailModel emailModel = new EmailModel("Produtos com estoque critico", new EstoqueAbaixoModel(ps), EmailType.ESTOQUE);
+
+            var papel = papelRepository.salvar(new Papel("ler_produto"));
+
+            var compras = setorRepository.findByNomeContainsIgnoreCase("compras");
+
+            var us = usuarioRepository.buscarPeloPapel(papel.getId(), papel.getId(), compras.getId());
+
+            emailModel.getDestinatarios()
+                    .addAll(us.parallelStream().map(Usuario::getEmail).distinct().collect(Collectors.toList()));
+
+            System.out.println(emailModel.getDestinatarios().toString());
+
+            emailService.enviarEmail(emailModel);
+        }
     }
 }

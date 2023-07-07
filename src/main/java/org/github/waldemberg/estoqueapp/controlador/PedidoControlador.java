@@ -3,6 +3,7 @@ package org.github.waldemberg.estoqueapp.controlador;
 import org.github.waldemberg.estoqueapp.anotacao.CriarPedido;
 import org.github.waldemberg.estoqueapp.anotacao.LerPedidos;
 import org.github.waldemberg.estoqueapp.dto.NovoPedidoDTO;
+import org.github.waldemberg.estoqueapp.exceptions.EstoqueInsuficienteException;
 import org.github.waldemberg.estoqueapp.model.Pedido;
 import org.github.waldemberg.estoqueapp.repository.ProdutoRepository;
 import org.github.waldemberg.estoqueapp.service.PedidoService;
@@ -94,7 +95,11 @@ public class PedidoControlador {
     @GetMapping("/{id}/aceitar")
     public String aceitarPedido(@PathVariable("id") Long id) {
 
-        service.aceitar(id);
+        try {
+            service.aceitar(id);
+        } catch (EstoqueInsuficienteException e) {
+            throw new RuntimeException(e);
+        }
 
         return "redirect:/pedidos";
     }

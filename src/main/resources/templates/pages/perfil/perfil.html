@@ -110,6 +110,16 @@
         />
       </div>
       <div class="input-field col s12">
+        <label for="username">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          th:value="${usuario.email}"
+          readonly
+        />
+      </div>
+      <div class="input-field col s12">
         <label for="setor">Setor</label>
         <input
           id="setor"
@@ -119,6 +129,7 @@
         />
       </div>
     </div>
+    
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>

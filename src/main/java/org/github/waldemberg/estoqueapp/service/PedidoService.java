@@ -1,7 +1,9 @@
 package org.github.waldemberg.estoqueapp.service;
 
 import org.github.waldemberg.estoqueapp.dto.NovoPedidoDTO;
+import org.github.waldemberg.estoqueapp.exceptions.EstoqueInsuficienteException;
 import org.github.waldemberg.estoqueapp.model.Pedido;
+import org.github.waldemberg.estoqueapp.util.ErroGeral;
 import org.github.waldemberg.estoqueapp.util.EstoqueAbaixo;
 
 import java.util.ArrayList;
@@ -22,5 +24,5 @@ public interface PedidoService {
 
     List<Pedido> buscarMeusPedidos(int pagina, String status);
 
-    void aceitar(Long id);
+    void aceitar(Long id) throws EstoqueInsuficienteException;
 }

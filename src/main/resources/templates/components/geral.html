@@ -160,6 +160,10 @@
         <input type="text" name="username" id="username" />
       </div>
       <div class="input-field">
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" />
+      </div>
+      <div class="input-field">
         <select class="browser-default" name="setor">
           <option
             th:each="setor : ${setores}"
@@ -173,10 +177,6 @@
       <div class="input-field">
         <label for="senha">Senha</label>
         <input type="password" name="senha" id="quantidadeMinima" />
-      </div>
-      <div class="input-field">
-        <label for="verifica-senha">Confirme a senha</label>
-        <input type="password" id="verifica-senha" />
       </div>
 
       <button class="waves-effect btn-small indigo col s12" type="submit">
@@ -240,6 +240,17 @@
             class="input-field col s6"
           />
         </div>
+        <div class="row">
+          <label class="col s6">Email</label>
+          <input
+            th:value="${usuario.email}"
+            name="email"
+            id="email"
+            class="input-field col s6"
+            readonly
+          />
+        </div>
+        
         <div class="col s12 row">
           <select name="setor" class="browser-default">
             <option

@@ -2,6 +2,8 @@ package org.github.waldemberg.estoqueapp.service;
 
 import org.github.waldemberg.estoqueapp.dto.AtualizaUsuarioDTO;
 import org.github.waldemberg.estoqueapp.dto.NovoUsuarioDTO;
+import org.github.waldemberg.estoqueapp.model.mail.EmailModel;
+import org.github.waldemberg.estoqueapp.model.mail.EmailType;
 import org.github.waldemberg.estoqueapp.model.Pedido;
 import org.github.waldemberg.estoqueapp.model.Usuario;
 import org.github.waldemberg.estoqueapp.repository.*;
@@ -21,15 +23,17 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final PedidoRepository pedidoRepository;
     private final PapelRepository papelRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
 
-    public UsuarioServiceImpl(UsuarioRepository repository, SetorRepository repository1, AutoridadeRepository autoridadeRepository, PedidoRepository pedidoRepository, PapelRepository papelRepository, PasswordEncoder passwordEncoder) {
+    public UsuarioServiceImpl(UsuarioRepository repository, SetorRepository repository1, AutoridadeRepository autoridadeRepository, PedidoRepository pedidoRepository, PapelRepository papelRepository, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.repository = repository;
         this.setorRepository = repository1;
         this.autoridadeRepository = autoridadeRepository;
         this.pedidoRepository = pedidoRepository;
         this.papelRepository = papelRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @Override
@@ -43,6 +47,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         usuario.setNome(novoUsuario.getNome());
         usuario.setUsername(novoUsuario.getUsername());
+        usuario.setEmail(novoUsuario.getEmail());
         usuario.setAutoridade(autoridadeRepository.findByNome("USUARIO"));
 
         if (setorRepository.existsByNomeContainsIgnoreCase(novoUsuario.getSetor())) {
@@ -51,14 +56,23 @@ public class UsuarioServiceImpl implements UsuarioService {
             if (novoUsuario.getSetor().equals("Compras")) {
                 var papel1 = papelRepository.findByNome("ler_pedido");
                 var papel2 = papelRepository.findByNome("atender_pedido");
+                var papel3 = papelRepository.findByNome("ler_produto");
+                var papel4 = papelRepository.findByNome("criar_produto");
+                var papel5 = papelRepository.findByNome("atualizar_produto");
 
-                usuario.setPapeis(List.of(papel1, papel2));
+                usuario.setPapeis(List.of(papel1, papel2, papel3, papel4, papel5));
             }
         }
 
         usuario.setSenha(passwordEncoder.encode(novoUsuario.getSenha()));
 
         repository.salvar(usuario);
+
+        EmailModel emailModel = new EmailModel("DADOS DE ACESSO PARA " + usuario.getNome(), novoUsuario, EmailType.CADASTRO);
+
+        emailModel.getDestinatarios().add(usuario.getEmail());
+
+        emailService.enviarEmail(emailModel);
     }
 
     @Override

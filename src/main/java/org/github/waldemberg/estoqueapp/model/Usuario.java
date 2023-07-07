@@ -30,6 +30,8 @@ public class Usuario implements UserDetails {
     private boolean habilitado;
     @Column(nullable = false, unique = true)
     private String username;
+    @Column(nullable = false, unique = true)
+    private String email;
     @Column(nullable = false)
     @JsonSetter("password")
     private String senha;
@@ -64,6 +66,14 @@ public class Usuario implements UserDetails {
 
     public void setHabilitado(boolean habilitado) {
         this.habilitado = habilitado;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override

@@ -6,6 +6,7 @@ import org.github.waldemberg.estoqueapp.model.Usuario;
 import org.github.waldemberg.estoqueapp.repository.AutoridadeRepository;
 import org.github.waldemberg.estoqueapp.repository.PapelRepository;
 import org.github.waldemberg.estoqueapp.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,9 @@ public class AutoridadeUtils {
     private final PapelRepository papelRepository;
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${spring.mail.username}")
+    private String emailAdmin;
 
     public AutoridadeUtils(AutoridadeRepository autoridadeRepository, PapelRepository papelRepository, UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.autoridadeRepository = autoridadeRepository;
@@ -92,6 +96,7 @@ public class AutoridadeUtils {
             administrador.setAutoridade(admin);
             administrador.setUsername("admin");
             administrador.setNome("admin");
+            administrador.setEmail(emailAdmin);
             administrador.setHabilitado(true);
             administrador.setSenha(passwordEncoder.encode("admin"));
 

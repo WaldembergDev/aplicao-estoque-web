@@ -23,6 +23,7 @@ public class NovoUsuarioDTO {
     private String senha;
 
     private String setor;
+    private String email;
 
     public String getSetor() {
         return setor;
@@ -56,4 +57,11 @@ public class NovoUsuarioDTO {
         this.senha = senha;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

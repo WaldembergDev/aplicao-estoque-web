@@ -20,6 +20,10 @@ public interface UsuarioRepository extends PagingAndSortingRepository<Usuario, I
     @Modifying
     @Query("update Usuario u set u.habilitado = ?1 where u.id = ?2")
     void desabilitar(boolean habilitado, int id);
+
+    @Query("select u from Usuario u left join u.papeis papeis left join u.autoridade.papeis papeis " +
+            "where papeis.id = ?1 or papeis.id = ?2 or u.setor.id = ?3")
+    List<Usuario> buscarPeloPapel(int id, int id1, short id2);
     Optional<Usuario> findByUsername(@NonNull String username);
 
     boolean existsByUsername(@NonNull String username);
